@@ -1,0 +1,1 @@
+chrome.sidePanel.setPanelBehavior({openPanelOnActionClick:!0});chrome.runtime.onInstalled.addListener(()=>{chrome.contextMenus.create({id:"add-all-tabs",title:"Add all tabs to Collections",contexts:["all"]})});chrome.contextMenus.onClicked.addListener((e,t)=>{e.menuItemId});

@@ -1,0 +1,19 @@
+{
+  "name": "edge-collections-ext",
+  "version": "1.0.0",
+  "description": "Save and organize pages, text, and images into collections.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "test": "vitest",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "vite": "^5.4.0",
+    "@crxjs/vite-plugin": "^2.0.0-beta.26",
+    "vitest": "^2.1.0"
+  }
+}

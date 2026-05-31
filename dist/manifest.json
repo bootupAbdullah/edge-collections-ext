@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Collections",
+  "version": "1.0.0",
+  "description": "Save and organize pages, text, and images into collections.",
+  "action": {
+    "default_icon": {
+      "128": "icons/icon128.png"
+    },
+    "default_tooltip": "Collections"
+  },
+  "side_panel": {
+    "default_path": "src/pages/sidepanel.html"
+  },
+  "permissions": [
+    "storage",
+    "sidePanel",
+    "activeTab",
+    "contextMenus",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/content.js-l0sNRNKZ.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "assets/content.js-l0sNRNKZ.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ]
+}
