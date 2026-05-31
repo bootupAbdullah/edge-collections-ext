@@ -8,7 +8,8 @@
     "default_icon": {
       "128": "icons/icon128.png"
     },
-    "default_tooltip": "Collections"
+    "default_tooltip": "Collections",
+    "default_popup": "src/pages/popup.html"
   },
 
   "side_panel": {
