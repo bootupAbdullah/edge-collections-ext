@@ -35,15 +35,32 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 // Listen for pin/unpin messages from popup or side panel
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'PIN_PANEL') {
-    chrome.storage.local.set({ pinned: true });
-    applyPinState(true);
-    sendResponse({ success: true });
-  }
-  if (message.type === 'UNPIN_PANEL') {
-    chrome.storage.local.set({ pinned: false });
-    applyPinState(false);
-    sendResponse({ success: true });
+  (async () => {
+    if (message.type === 'PIN_PANEL') {
+      chrome.storage.local.set({ pinned: true });
+      applyPinState(true);
+      sendResponse({ success: true });
+    }
+    if (message.type === 'UNPIN_PANEL') {
+      await chrome.storage.local.set({ pinned: false });
+      const verify = await chrome.storage.local.get('pinned');
+      console.log('[UNPIN] pinned in storage:', verify.pinned);
+      await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+      console.log('[UNPIN] openPanelOnActionClick set to: false');
+      sendResponse({ success: true });
+    }
+  })();
+  return true; // keep channel open for async sendResponse
+});
+
+chrome.action.onClicked.addListener(async (tab) => {
+  const pinned = await getPinState();
+  console.log('[ACTION CLICKED] pinned state:', pinned);
+  if (pinned) {
+    await chrome.sidePanel.open({ windowId: tab.windowId });
+  } else {
+    await chrome.action.setPopup({ popup: 'src/pages/popup.html' });
+    await chrome.action.openPopup();
   }
 });
 
