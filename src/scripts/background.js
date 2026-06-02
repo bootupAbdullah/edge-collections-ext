@@ -23,7 +23,7 @@ getPinState().then(applyPinState);
 
 // On install — default to unpinned/popup mode
 chrome.runtime.onInstalled.addListener(async () => {
-  await chrome.storage.local.set({ pinned: false });
+  await chrome.storage.local.set({ pinned: false, sidePanelOpen: false });
   applyPinState(false);
 
   chrome.contextMenus.create({
@@ -31,6 +31,10 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: "Add all tabs to Collections",
     contexts: ["all"]
   });
+});
+
+chrome.runtime.onStartup.addListener(async () => {
+  await chrome.storage.local.set({ sidePanelOpen: false, pinned: false });
 });
 
 // Listen for pin/unpin messages from popup or side panel
@@ -59,6 +63,8 @@ chrome.action.onClicked.addListener(async (tab) => {
   if (pinned) {
     await chrome.sidePanel.open({ windowId: tab.windowId });
   } else {
+    const { sidePanelOpen } = await chrome.storage.local.get('sidePanelOpen');
+    if (sidePanelOpen) return;
     await chrome.action.setPopup({ popup: 'src/pages/popup.html' });
     await chrome.action.openPopup();
   }
