@@ -2,6 +2,7 @@
 // Handles extension lifecycle, context menus, and side panel opening.
 
 const POPUP_PATH = 'src/pages/popup.html';
+let isHandlingClick = false;
 
 async function getPinState() {
   const result = await chrome.storage.local.get('pinned');
@@ -46,9 +47,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: true });
     }
     if (message.type === 'UNPIN_PANEL') {
-      await chrome.storage.local.set({ pinned: false });
+      await chrome.storage.local.set({ pinned: false, sidePanelOpen: false });
       const verify = await chrome.storage.local.get('pinned');
       console.log('[UNPIN] pinned in storage:', verify.pinned);
+      console.log('[UNPIN] sidePanelOpen set to: false');
       await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
       console.log('[UNPIN] openPanelOnActionClick set to: false');
       sendResponse({ success: true });
@@ -58,15 +60,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
-  const pinned = await getPinState();
-  console.log('[ACTION CLICKED] pinned state:', pinned);
-  if (pinned) {
-    await chrome.sidePanel.open({ windowId: tab.windowId });
-  } else {
-    const { sidePanelOpen } = await chrome.storage.local.get('sidePanelOpen');
-    if (sidePanelOpen) return;
-    await chrome.action.setPopup({ popup: 'src/pages/popup.html' });
-    await chrome.action.openPopup();
+  if (isHandlingClick) return;
+  isHandlingClick = true;
+  try {
+    const pinned = await getPinState();
+    console.log('[ACTION CLICKED] pinned state:', pinned);
+    if (pinned) {
+      await chrome.sidePanel.open({ windowId: tab.windowId });
+    } else {
+      await chrome.action.setPopup({ popup: 'src/pages/popup.html' });
+      await chrome.action.openPopup();
+    }
+  } finally {
+    isHandlingClick = false;
   }
 });
 

@@ -1,0 +1,1 @@
+import"./ui-DFuoza3D.js";window.addEventListener("load",()=>{console.log("[SIDEPANEL] loaded"),chrome.storage.local.set({sidePanelOpen:!0}),chrome.action.disable()});window.addEventListener("beforeunload",()=>{console.log("[SIDEPANEL] unloading"),chrome.storage.local.set({sidePanelOpen:!1}),chrome.action.enable()});
